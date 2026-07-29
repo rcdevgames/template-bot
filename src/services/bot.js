@@ -2,31 +2,12 @@ import { Bot, GrammyError, HttpError } from "grammy";
 import { session } from "grammy";
 import { limit as rateLimit } from "@grammyjs/ratelimiter";
 import { logger } from "../utils/logger.js";
+import { authMiddleware } from "../middlewares/auth.js";
 
 const token = process.env.BOT_TOKEN;
 if (!token) throw new Error("BOT_TOKEN not set in .env");
 
 export const bot = new Bot(token);
-
-// --- Session middleware ---
-// Stores per-user state in memory (swap to file/redis adapter later if needed)
-bot.use(
-  session({
-    initial: () => ({ step: null, data: {} }),
-  })
-);
-
-// --- Rate limiter middleware ---
-// 1 message per 2 seconds per user, queue up to 5
-bot.use(
-  rateLimit({
-    timeFrame: 2000,
-    limit: 1,
-    onLimitExceeded: (ctx) => {
-      ctx.reply("⏳ Sabar, jangan spam ya.");
-    },
-  })
-);
 
 // --- Global error handler ---
 bot.catch((err) => {
@@ -41,6 +22,29 @@ bot.catch((err) => {
     logger.error("Unknown error:", e);
   }
 });
+
+// --- Middleware: Rate Limiter ---
+// 1 message per 2 seconds per user, queue up to 5
+bot.use(
+  rateLimit({
+    timeFrame: 2000,
+    limit: 1,
+    onLimitExceeded: (ctx) => {
+      ctx.reply("⏳ Sabar, jangan spam ya.");
+    },
+  })
+);
+
+// --- Middleware: Auth/Whitelist ---
+// bot.use(authMiddleware);
+
+// --- Middleware: Session ---
+// Stores per-user state in memory (swap to file/redis adapter later if needed)
+bot.use(
+  session({
+    initial: () => ({ step: null, data: {} }),
+  })
+);
 
 // Set bot commands (appears in Telegram menu button)
 await bot.init();
