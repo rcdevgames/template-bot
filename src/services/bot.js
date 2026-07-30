@@ -1,7 +1,8 @@
 import { Bot, GrammyError, HttpError } from "grammy";
 import { session } from "grammy";
 import { limit as rateLimit } from "@grammyjs/ratelimiter";
-import { logger } from "../utils/logger.js";
+import { logger, traceStorage } from "../utils/logger.js";
+import { traceMiddleware } from "../middlewares/trace.js";
 // import { authMiddleware } from "../middlewares/auth.js";
 
 const token = process.env.BOT_TOKEN;
@@ -9,18 +10,25 @@ if (!token) throw new Error("BOT_TOKEN not set in .env");
 
 export const bot = new Bot(token);
 
+// --- Middleware: Trace ID (MUST BE FIRST) ---
+bot.use(traceMiddleware);
+
 // --- Global error handler ---
 bot.catch((err) => {
   const ctx = err.ctx;
-  logger.error(`Error while handling update ${ctx?.update?.update_id ?? "?"}:`);
-  const e = err.error;
-  if (e instanceof GrammyError) {
-    logger.error("GrammyError:", e.description);
-  } else if (e instanceof HttpError) {
-    logger.error("HttpError:", e);
-  } else {
-    logger.error("Unknown error:", e);
-  }
+  const traceId = ctx?.traceId || "SYSTEM--";
+
+  traceStorage.run(traceId, () => {
+    logger.error(`Error while handling update ${ctx?.update?.update_id ?? "?"}:`);
+    const e = err.error;
+    if (e instanceof GrammyError) {
+      logger.error("GrammyError:", e.description);
+    } else if (e instanceof HttpError) {
+      logger.error("HttpError:", e);
+    } else {
+      logger.error("Unknown error:", e);
+    }
+  });
 });
 
 // --- Middleware: Rate Limiter ---
