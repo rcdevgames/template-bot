@@ -2,7 +2,7 @@ import { Bot, GrammyError, HttpError } from "grammy";
 import { session } from "grammy";
 import { limit as rateLimit } from "@grammyjs/ratelimiter";
 import { logger } from "../utils/logger.js";
-import { authMiddleware } from "../middlewares/auth.js";
+// import { authMiddleware } from "../middlewares/auth.js";
 
 const token = process.env.BOT_TOKEN;
 if (!token) throw new Error("BOT_TOKEN not set in .env");
