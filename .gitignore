@@ -15,12 +15,14 @@ logs/
 _.log
 report.[0-9]_[0-9]_[0-9]_[0-9].json
 
-# dotenv — .env.example versioned, .env .gitignored
-.env.example
-!.env.local
-!.env.development
-!.env.test
-!.env.production
+# dotenv
+.env
+.env.*
+!.env.example
+!.env.local.example
+!.env.development.example
+!.env.test.example
+!.env.production.example
 
 # caches
 .eslintcache
