@@ -4,7 +4,7 @@ module.exports = {
       name: "template-bot",
       script: "./index.js",
       cwd: __dirname,
-      interpreter: "node",
+      interpreter: "bun",
       env: {
         NODE_ENV: "production",
       },

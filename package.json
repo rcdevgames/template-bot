@@ -4,9 +4,11 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "pm2 start ecosystem.config.cjs --watch",
-    "lint": "eslint .",
-    "format": "prettier --write ."
+    "dev": "bun --watch index.js",
+    "start": "bun index.js",
+    "build": "bun build ./index.js --compile --outfile=dist/bot",
+    "lint": "bunx eslint .",
+    "format": "bunx prettier --write ."
   },
   "dependencies": {
     "@grammyjs/ratelimiter": "^1.2.1",
