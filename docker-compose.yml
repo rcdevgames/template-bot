@@ -1,0 +1,29 @@
+services:
+  template-bot:
+    build: .
+    container_name: template-bot
+    restart: unless-stopped
+    env_file: .env
+    networks:
+      - waw_bridge
+
+# PostgreSQL intentionally commented. Existing shared DB is on waw_bridge.
+# Uncomment only for isolated local development:
+#  postgres:
+#    image: postgres:16-alpine
+#    environment:
+#      POSTGRES_DB: template_bot
+#      POSTGRES_USER: postgres
+#      POSTGRES_PASSWORD: change-me
+#    volumes:
+#      - postgres_data:/var/lib/postgresql/data
+#    networks:
+#      - waw_bridge
+
+networks:
+  waw_bridge:
+    external: true
+
+# volumes:
+#   postgres_data:
+        

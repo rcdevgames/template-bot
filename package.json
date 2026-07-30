@@ -4,7 +4,9 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "bun --watch index.js"
+    "dev": "pm2 start ecosystem.config.cjs --watch",
+    "lint": "eslint .",
+    "format": "prettier --write ."
   },
   "dependencies": {
     "@grammyjs/ratelimiter": "^1.2.1",
@@ -16,6 +18,8 @@
     "telegram-format": "^3.1.0"
   },
   "devDependencies": {
+    "eslint": "^10.8.0",
+    "prettier": "^3.9.6",
     "telegraf-middleware-console-time": "^3.0.0"
   }
 }
